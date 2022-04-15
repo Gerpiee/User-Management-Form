@@ -1,14 +1,33 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Employee from "./Employee";
+import { Button, Modal, Alert } from "react-bootstrap";
 import { EmployeeContext } from "../contexts/EmployeeContext";
-import { Button, Modal } from "react-bootstrap";
 import AddForm from "./AddForm";
 
 const EmployeeList = () => {
   const { employees } = useContext(EmployeeContext);
-  const [show, setShow] = useState(false); // Bu kısımda Kullanıcı dan input almak için oluşturduğumuz formumuzun görünür/görünmez olması için state oluşturduk ilk durumda görünmüyor
-  const handleClose = () => setShow(false); // Bu kısımda formumuz görünmüyor Formda Bulunan Close modal'a Ekliyoruz Tıkladığımızda Görünmeyecek
-  const handleShow = () => setShow(true); // Bu kısımda görünüyor Add Employee Butonuna onclick eveti olarak ekliyoruz Tıkladığımızda görünecek
+
+  const [showAlert, setShowAlert] = useState(false);
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+  //const handleShowAlert = () => setShowAlert(true);
+
+  const handleShowAlert = () => {
+    setShowAlert(true);
+    setTimeout(() => {
+      setShowAlert(false);
+    }, 2000);
+  };
+
+  useEffect(() => {
+    handleClose();
+
+    return () => {
+      handleShowAlert();
+    };
+  }, [employees]);
 
   return (
     <>
@@ -16,7 +35,7 @@ const EmployeeList = () => {
         <div className="row">
           <div className="col-sm-6">
             <h2>
-              Kullanıcı Ekleme <b>Formu</b>
+              Kullanıcı <b>Formu</b>
             </h2>
           </div>
           <div className="col-sm-6">
@@ -31,6 +50,11 @@ const EmployeeList = () => {
           </div>
         </div>
       </div>
+
+      <Alert show={showAlert} variant="success">
+        Liste Başarıyla Güncellendi
+      </Alert>
+
       <table className="table table-striped table-hover">
         <thead>
           <tr>
@@ -42,10 +66,16 @@ const EmployeeList = () => {
           </tr>
         </thead>
         <tbody>
-          <Employee employees={employees} />
+          {employees // Bu Kısımda Sıralama Yapıyoruz ?
+            .sort((a, b) => (a.name < b.name ? -1 : 1))
+            .map((employee) => (
+              <tr key={employee.id}>
+                <Employee employee={employee} />
+              </tr>
+            ))}
         </tbody>
       </table>
-      {/*  Modal Oluşturma kısmı */}
+
       <Modal show={show} onHide={handleClose}>
         <Modal.Header className="modal-header" closeButton>
           <Modal.Title>Kullanıcı Ekle</Modal.Title>
@@ -54,7 +84,7 @@ const EmployeeList = () => {
           <AddForm />
         </Modal.Body>
         <Modal.Footer>
-          <Button onClick={handleClose} variat="secondary">
+          <Button variant="secondary" onClick={handleClose}>
             Çıkış
           </Button>
         </Modal.Footer>
@@ -64,3 +94,7 @@ const EmployeeList = () => {
 };
 
 export default EmployeeList;
+
+// .sort((a,b) => a.name.localeCompare(b.name))
+
+// sort((a,b) => (a.name < b.name ? -1 : 1 ))
