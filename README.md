@@ -17,11 +17,13 @@ This project is a web application for managing users through a dynamic and respo
 - **UUID**: To generate unique user identifiers.
 - **Props Usage**: For passing data between components.
 
-## Getting Started
-
 ## Screenshots
 
 https://github.com/Gerpiee/Kullanici_Ekleme_Formu/issues/1#issue-2666150535
+
+## Getting Started
+
+
 
 ### Install Dependencies
 npm install
